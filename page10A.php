@@ -1,4 +1,19 @@
-<?php include 'dbconn.php'; ?>
+<?php
+require_once 'security.php';
+
+if (isset($_GET['logout'])) {
+    $_SESSION = [];
+    if (ini_get('session.use_cookies')) {
+        $cookieParams = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000, $cookieParams['path'], $cookieParams['domain'], $cookieParams['secure'], $cookieParams['httponly']);
+    }
+    session_destroy();
+    header('Location: page10A.php');
+    exit;
+}
+
+include 'dbconn.php';
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -50,6 +65,12 @@
 
             .status-message {
                 color: #176b37;
+            }
+
+            .login-error {
+                color: #c62828;
+                text-align: center;
+                margin-top: 18px;
             }
 
             form table {
@@ -153,6 +174,11 @@
             <div class="login-title">Login</div>
             <?php if (isset($_GET['registered'])): ?>
                 <p class="status-message">Akun berhasil dibuat. Silakan login.</p>
+            <?php endif; ?>
+            <?php if (($_GET['error'] ?? '') === 'login'): ?>
+                <p class="login-error" role="alert">Username atau password salah</p>
+            <?php elseif (($_GET['error'] ?? '') === 'unregistered'): ?>
+                <p class="login-error" role="alert">Username belum terdaftar. Silakan buat akun terlebih dahulu.</p>
             <?php endif; ?>
             <form id="loginForm" action="page10A_action.php" method="post">
                 <input type="hidden" name="action" value="login">

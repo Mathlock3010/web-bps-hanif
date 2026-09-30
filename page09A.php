@@ -1,4 +1,6 @@
 <?php
+require_once 'security.php';
+requireLogin();
 include 'dbconn.php';
 
 $kataKunci = trim($_GET['q'] ?? '');
@@ -119,7 +121,7 @@ if ($kataKunci !== '') {
         <a class="active" href="page09A.php">Daftar Publikasi</a>
         <a href="page09C.php">Tambah Publikasi</a>
         <a href="page06E.php">Galeri Kegiatan</a>
-        <a href="page10A.php">Logout</a>
+        <a href="page10A.php?logout=1">Logout</a>
         </nav>
     </header>
     <main>  
@@ -143,15 +145,17 @@ if ($kataKunci !== '') {
             $jumlahHasil = 0;
             foreach ($result as $row) {
                 $jumlahHasil++;
+                $noParam = rawurlencode((string) $row['no']);
+                $sampulParam = rawurlencode((string) $row['sampul']);
                 echo "<tr>";
-                echo "<td>". $row["no"]. "</td>";
-                echo "<td>". $row["judul"]. "</td>";
-                echo "<td>". $row["tanggal_rilis"]. "</td>";
-                echo "<td><img src='sampul/". $row["sampul"]. "' alt='No Image' width='70px'></td>";
+                echo "<td>". htmlspecialchars((string) $row['no'], ENT_QUOTES, 'UTF-8'). "</td>";
+                echo "<td>". htmlspecialchars((string) $row['judul'], ENT_QUOTES, 'UTF-8'). "</td>";
+                echo "<td>". htmlspecialchars((string) $row['tanggal_rilis'], ENT_QUOTES, 'UTF-8'). "</td>";
+                echo "<td><img src='sampul/". $sampulParam. "' alt='No Image' width='70px'></td>";
                 // Menambahkan tombol edit dan hapus
                 echo "<td>
-                    <a class='aksi-ikon edit' href='page09E.php?no=". $row["no"]. "&judul=". urlencode($row["judul"]). "&tanggal_rilis=". $row["tanggal_rilis"]. "&sampul=". $row["sampul"]. "' title='Edit publikasi' aria-label='Edit publikasi'>&#9998;</a>
-                    <a class='aksi-ikon hapus' href='page09F.php?no=". $row["no"]. "&sampul=". $row["sampul"]. "' title='Hapus publikasi' aria-label='Hapus publikasi' onclick=\"return confirm('Yakin ingin menghapus?');\">&#128465;</a>
+                    <a class='aksi-ikon edit' href='page09E.php?no=". $noParam. "' title='Edit publikasi' aria-label='Edit publikasi'>&#9998;</a>
+                    <a class='aksi-ikon hapus' href='page09F.php?no=". $noParam. "' title='Hapus publikasi' aria-label='Hapus publikasi' onclick=\"return confirm('Yakin ingin menghapus?');\">&#128465;</a>
                 </td>";
                 echo "</tr>";
             }

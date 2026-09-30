@@ -1,4 +1,6 @@
 <?php
+require_once 'security.php';
+requireLogin();
 include 'dbconn.php';
 ?>
 <!DOCTYPE html>
@@ -136,7 +138,7 @@ include 'dbconn.php';
             <a href="page09A.php">Daftar Publikasi</a>
             <a href="page09C.php">Tambah Publikasi</a>
             <a href="page06E.php">Galeri Kegiatan</a>
-            <a href="page10A.php">Logout</a>
+            <a href="page10A.php?logout=1">Logout</a>
         </nav>
     </header>
 
@@ -166,7 +168,7 @@ include 'dbconn.php';
                 <?php
                     $terbaru = $pdo->query("SELECT judul, tanggal_rilis FROM publikasi ORDER BY tanggal_rilis DESC LIMIT 1")->fetch();
                     if ($terbaru) {
-                        echo "<p style='margin-top: 12px; color: #444;'><strong>Terbaru:</strong> " . $terbaru['judul'] . "<br>" . $terbaru['tanggal_rilis'] . "</p>";
+                        echo "<p style='margin-top: 12px; color: #444;'><strong>Terbaru:</strong> " . htmlspecialchars($terbaru['judul'], ENT_QUOTES, 'UTF-8') . "<br>" . htmlspecialchars($terbaru['tanggal_rilis'], ENT_QUOTES, 'UTF-8') . "</p>";
                     } else {
                         echo "<p style='margin-top: 12px; color: #444;'>Belum ada data publikasi.</p>";
                     }

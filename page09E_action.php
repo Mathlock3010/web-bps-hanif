@@ -1,30 +1,40 @@
 <?php
+require_once 'security.php';
+requireLogin();
 include 'dbconn.php';
 try {
-    $no = $_POST['no'];
-    $judul = $_POST['judul'];
-    $tanggal_rilis = $_POST['tanggal_rilis'];
-    
-    
-    if (isset($_FILES['sampul_baru']) && $_FILES['sampul_baru']['error'] === 0) {
-        $namaFile = $_FILES['sampul_baru']['name'];
-        $lokasiSementara = $_FILES['sampul_baru']['tmp_name'];
-        $dirUpload = "sampul/";
-        
-        move_uploaded_file($lokasiSementara, $dirUpload.$namaFile);
-        
-        
-        $sampulLama = $_POST['sampul_lama_nama'];
-        if(file_exists("sampul/" . $sampulLama) && $sampulLama != $namaFile) {
-            unlink("sampul/" . $sampulLama);
-        }
+    $no = $_POST['no'] ?? '';
+    $judul = $_POST['judul'] ?? '';
+    $tanggal_rilis = $_POST['tanggal_rilis'] ?? '';
+    $selectCover = $pdo->prepare("SELECT sampul FROM publikasi WHERE no = :no");
+    $selectCover->execute(['no' => $no]);
+    $sampulLama = $selectCover->fetchColumn();
 
-        $sql = "UPDATE publikasi SET judul='$judul', tanggal_rilis='$tanggal_rilis', sampul='$namaFile' WHERE no='$no'";
-    } else {
-        $sql = "UPDATE publikasi SET judul='$judul', tanggal_rilis='$tanggal_rilis' WHERE no='$no'";
+    if ($sampulLama === false) {
+        exit('Data publikasi tidak ditemukan.');
     }
     
-    $pdo->query($sql);
+    $upload = $_FILES['sampul_baru'] ?? null;
+    if ($upload !== null && $upload['error'] !== UPLOAD_ERR_NO_FILE) {
+        $namaFile = saveCoverUpload($upload);
+        $sql = "UPDATE publikasi SET judul = :judul, tanggal_rilis = :tanggal_rilis, sampul = :sampul WHERE no = :no";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            'judul' => $judul,
+            'tanggal_rilis' => $tanggal_rilis,
+            'sampul' => $namaFile,
+            'no' => $no
+        ]);
+        removeCoverFile($sampulLama);
+    } else {
+        $sql = "UPDATE publikasi SET judul = :judul, tanggal_rilis = :tanggal_rilis WHERE no = :no";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            'judul' => $judul,
+            'tanggal_rilis' => $tanggal_rilis,
+            'no' => $no
+        ]);
+    }
     
     echo "<script>
         alert('Data Berhasil Diubah');
@@ -34,5 +44,8 @@ try {
     $pdo = NULL;
 } catch (PDOException $e) {
     exit("PDO Error: " . $e->getMessage() . "<br>");
+} catch (RuntimeException $e) {
+    http_response_code(400);
+    exit(htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'));
 }
 ?>

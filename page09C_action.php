@@ -1,16 +1,14 @@
 <?php
+require_once 'security.php';
+requireLogin();
 include 'dbconn.php';
 try {
-    $judul = $_POST['judul'];
-    $tanggal_rilis = $_POST['tanggal_rilis'];
+    $judul = $_POST['judul'] ?? '';
+    $tanggal_rilis = $_POST['tanggal_rilis'] ?? '';
 
     $nomorBerikutnya = $pdo->query("SELECT COALESCE(MAX(no), 0) + 1 AS nomor_baru FROM publikasi")->fetchColumn();
 
-    $namaFile = $_FILES['sampul']['name'];
-    $lokasiSementara = $_FILES['sampul']['tmp_name'];
-    $dirUpload = "sampul/";
-    
-    move_uploaded_file($lokasiSementara, $dirUpload.$namaFile);
+    $namaFile = saveCoverUpload($_FILES['sampul'] ?? []);
 
     $sql = "INSERT INTO publikasi (no, judul, tanggal_rilis, sampul) VALUES (:no, :judul, :tanggal_rilis, :sampul)";
     $stmt = $pdo->prepare($sql);
@@ -29,5 +27,8 @@ try {
     $pdo = NULL;
 } catch (PDOException $e) {
     exit("PDO Error: " . $e->getMessage() . "<br>");
+} catch (RuntimeException $e) {
+    http_response_code(400);
+    exit(htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'));
 }
 ?>

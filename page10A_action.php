@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once 'security.php';
 include 'dbconn.php';
 
 try {
@@ -50,7 +50,13 @@ try {
         exit();
     }
 
-    exit('Username atau password salah.');
+    if (!$user) {
+        header('Location: page10A.php?error=unregistered');
+        exit();
+    }
+
+    header('Location: page10A.php?error=login');
+    exit();
 } catch(PDOException $e) {
     echo "Proses akun gagal: ".htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
 }

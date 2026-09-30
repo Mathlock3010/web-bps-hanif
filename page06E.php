@@ -1,3 +1,7 @@
+<?php
+require_once 'security.php';
+requireLogin();
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -120,7 +124,7 @@
         <a href="page09A.php">Daftar Publikasi</a>
         <a href="page09C.php">Tambah Publikasi</a>
         <a class="active" href="page06E.php">Galeri Kegiatan</a>
-        <a href="page10A.php">Logout</a>
+        <a href="page10A.php?logout=1">Logout</a>
         </nav>
     </header>
 

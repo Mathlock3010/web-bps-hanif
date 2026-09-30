@@ -1,6 +1,6 @@
 function showHint(str) {
     if (str.length == 0) {
-        document.getElementById("txtHint").innerHTML = "";
+        document.getElementById("txtHint").textContent = "";
         filterTable([]);
         return;
     }
@@ -22,7 +22,7 @@ function showHint(str) {
                 }
             }
             
-            document.getElementById("txtHint").innerHTML = hintString;
+            document.getElementById("txtHint").textContent = hintString;
             filterTable(responseData);
         }
     };

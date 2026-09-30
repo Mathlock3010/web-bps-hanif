@@ -1,4 +1,6 @@
 <?php
+require_once 'security.php';
+requireLogin();
 include 'dbconn.php';
 
 $nomorBerikutnya = $pdo->query("SELECT COALESCE(MAX(no), 0) + 1 AS nomor_baru FROM publikasi")->fetchColumn();
@@ -69,7 +71,7 @@ $nomorBerikutnya = $pdo->query("SELECT COALESCE(MAX(no), 0) + 1 AS nomor_baru FR
         <a href="page09A.php">Daftar Publikasi</a>
         <a class="active" href="page09C.php">Tambah Publikasi</a>
         <a href="page06E.php">Galeri Kegiatan</a>
-        <a href="page10A.php">Logout</a>
+        <a href="page10A.php?logout=1">Logout</a>
         </nav>
     </header>
 

@@ -1,17 +1,18 @@
 <?php
+require_once 'security.php';
+requireLogin();
 include 'dbconn.php';
 try {
-    $no = $_GET['no'];
-    $namaFile = $_GET['sampul'];
-    
-    
-    if (file_exists("sampul/" . $namaFile) && !empty($namaFile)) {
-        unlink("sampul/" . $namaFile);
+    $no = $_GET['no'] ?? '';
+    $selectCover = $pdo->prepare("SELECT sampul FROM publikasi WHERE no = :no");
+    $selectCover->execute(['no' => $no]);
+    $namaFile = $selectCover->fetchColumn();
+
+    if ($namaFile !== false) {
+        $stmt = $pdo->prepare("DELETE FROM publikasi WHERE no = :no");
+        $stmt->execute(['no' => $no]);
+        removeCoverFile($namaFile);
     }
-    
-    
-    $sql = "DELETE FROM publikasi WHERE no='$no'";
-    $pdo->query($sql);
     
     echo "<script>
         alert('Data Berhasil Dihapus');
