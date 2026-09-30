@@ -8,7 +8,7 @@ function showHint(str) {
     var xhttp = new XMLHttpRequest();
     
     xhttp.onreadystatechange = function() {
-        // Periksa readystate dan status
+        
         if (this.readyState == 4 && this.status == 200) {
             
             var responseData = JSON.parse(this.responseText);

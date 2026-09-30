@@ -4,12 +4,12 @@ try {
     $no = $_GET['no'];
     $namaFile = $_GET['sampul'];
     
-    // Hapus file gambar dari folder
+    
     if (file_exists("sampul/" . $namaFile) && !empty($namaFile)) {
         unlink("sampul/" . $namaFile);
     }
     
-    // Syntax SQL Delete
+    
     $sql = "DELETE FROM publikasi WHERE no='$no'";
     $pdo->query($sql);
     

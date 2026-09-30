@@ -6,15 +6,12 @@ try {
 
     $nomorBerikutnya = $pdo->query("SELECT COALESCE(MAX(no), 0) + 1 AS nomor_baru FROM publikasi")->fetchColumn();
 
-    // Ambil data file sampul
     $namaFile = $_FILES['sampul']['name'];
     $lokasiSementara = $_FILES['sampul']['tmp_name'];
     $dirUpload = "sampul/";
     
-    // Pindahkan file
     move_uploaded_file($lokasiSementara, $dirUpload.$namaFile);
 
-    // Syntax SQL Insert
     $sql = "INSERT INTO publikasi (no, judul, tanggal_rilis, sampul) VALUES (:no, :judul, :tanggal_rilis, :sampul)";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([

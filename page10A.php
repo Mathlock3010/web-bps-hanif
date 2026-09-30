@@ -32,6 +32,26 @@
                 font-weight: bold;
             }
 
+            .account-switch,
+            .status-message {
+                text-align: center;
+                margin-top: 18px;
+            }
+
+            .account-switch button {
+                border: 0;
+                background: transparent;
+                color: #044ebb;
+                font-weight: bold;
+                text-decoration: underline;
+                cursor: pointer;
+                font: inherit;
+            }
+
+            .status-message {
+                color: #176b37;
+            }
+
             form table {
                 width: 100%;
                 border-collapse: collapse;
@@ -131,17 +151,21 @@
     <main>
         <div class="login-wrap">
             <div class="login-title">Login</div>
-            <form action="page10A_action.php" method="post">
+            <?php if (isset($_GET['registered'])): ?>
+                <p class="status-message">Akun berhasil dibuat. Silakan login.</p>
+            <?php endif; ?>
+            <form id="loginForm" action="page10A_action.php" method="post">
+                <input type="hidden" name="action" value="login">
                 <table>
                     <tr>
-                        <td><label>Username:</label></td>
-                        <td><input type="text" name="username" required></td>
+                        <td><label for="loginUsername">Username:</label></td>
+                        <td><input type="text" id="loginUsername" name="username" autocomplete="username" required></td>
                     </tr>
                     <tr>
-                        <td><label>Password:</label></td>
+                        <td><label for="password">Password:</label></td>
                         <td>
                             <div class="password-wrapper">
-                                <input type="password" id="password" name="password" required>
+                                <input type="password" id="password" name="password" autocomplete="current-password" required>
                                 <button type="button" class="toggle-password" id="togglePassword" aria-label="Tampilkan password" title="Tampilkan password">&#128065;</button>
                             </div>
                         </td>
@@ -151,6 +175,30 @@
                     </tr>
                 </table>
             </form>
+            <form id="registerForm" action="page10A_action.php" method="post" hidden>
+                <input type="hidden" name="action" value="register">
+                <table>
+                    <tr>
+                        <td><label for="registerUsername">Username:</label></td>
+                        <td><input type="text" id="registerUsername" name="username" autocomplete="username" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="registerPassword">Password:</label></td>
+                        <td><input type="password" id="registerPassword" name="password" autocomplete="new-password" minlength="6" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="confirmPassword">Ulangi password:</label></td>
+                        <td><input type="password" id="confirmPassword" name="confirm_password" autocomplete="new-password" minlength="6" required></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="submit" value="Daftar"></td>
+                    </tr>
+                </table>
+            </form>
+            <p class="account-switch">
+                <span id="switchPrompt">Belum punya akun?</span>
+                <button type="button" id="switchForm">Daftar akun</button>
+            </p>
         </div>
     </main>
     <footer>
@@ -158,6 +206,21 @@
         <p>Created by M. Hanif Indriawan <a href="mailto:ahmadhanifindriawan@gmail.com">(ahmadhanifindriawan@gmail.com)</a></p>
     </footer>
     <script>
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const loginTitle = document.querySelector('.login-title');
+        const switchPrompt = document.getElementById('switchPrompt');
+        const switchForm = document.getElementById('switchForm');
+
+        switchForm.addEventListener('click', function () {
+            const showRegisterForm = registerForm.hidden;
+            registerForm.hidden = !showRegisterForm;
+            loginForm.hidden = showRegisterForm;
+            loginTitle.textContent = showRegisterForm ? 'Daftar Akun' : 'Login';
+            switchPrompt.textContent = showRegisterForm ? 'Sudah punya akun?' : 'Belum punya akun?';
+            switchForm.textContent = showRegisterForm ? 'Login' : 'Daftar akun';
+        });
+
         const passwordInput = document.getElementById('password');
         const togglePassword = document.getElementById('togglePassword');
 

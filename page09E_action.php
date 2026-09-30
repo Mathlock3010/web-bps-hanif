@@ -5,7 +5,7 @@ try {
     $judul = $_POST['judul'];
     $tanggal_rilis = $_POST['tanggal_rilis'];
     
-    // Cek apakah ada file sampul baru yang diunggah
+    
     if (isset($_FILES['sampul_baru']) && $_FILES['sampul_baru']['error'] === 0) {
         $namaFile = $_FILES['sampul_baru']['name'];
         $lokasiSementara = $_FILES['sampul_baru']['tmp_name'];
@@ -13,7 +13,7 @@ try {
         
         move_uploaded_file($lokasiSementara, $dirUpload.$namaFile);
         
-        // Hapus sampul lama dari direktori agar tidak menumpuk
+        
         $sampulLama = $_POST['sampul_lama_nama'];
         if(file_exists("sampul/" . $sampulLama) && $sampulLama != $namaFile) {
             unlink("sampul/" . $sampulLama);
